@@ -12,23 +12,28 @@ edges = {}
 
 def process_headers(headers):
 	global nodenr, edgenr, nodes, edges
-	m = re.search( "From:.*?(<.*>).*?To:.*?(<.*>).*?Cc:.*?(<.*>)", 
+	fromstring = "onbekend";
+	tostring = "";
+	ccstring = "";
+	m = re.search( "From:.*?(<.*>).*:",  
 		headers, flags=re.M|re.S )
 	if m:
 		fromstring = m.group(1)
-		tostring = m.group(2)
-		ccstring = m.group(3)
-	else:
-		m = re.search( "From:.*?(<.*>).*?To:.*(<.*>)", 
+	m = re.search( "To:.*?(<.*>).*:",  
 		headers, flags=re.M|re.S )
-		print headers
-		fromstring = m.group(1)
-		tostring = m.group(2)
-		ccstring = ""
-	fromlist = re.findall("<([^@]*@[\w.]+)>", fromstring)
-	frm = fromlist[0]
-	tolist = re.findall("<([^@]*@[\w.]+)>", tostring)
-	cclist = re.findall("<([^@]*@[\w.]+)>", ccstring)
+	if m:
+		tostring = m.group(1)
+	m = re.search( "Cc:.*?(<.*>).*:",  
+		headers, flags=re.M|re.S )
+	if m:
+		ccstring = m.group(1)
+	fromlist = re.findall("<([^@]*@\S+)>", fromstring)
+	if len(fromlist) > 0:
+		frm = fromlist[0]
+	else:
+		frm = "UNKNOWN@UNKNOWN.ORG"
+	tolist = re.findall("<([^@]*@\S+)>", tostring)
+	cclist = re.findall("<([^@]*@\S+)>", ccstring)
 	if not (frm in nodes):
 		nodes[frm] = nodenr
 		nodenr = nodenr + 1
