@@ -2,7 +2,7 @@
 import pypff
 import re
 pst = pypff.file()
-pst.open("/media/sf_Mailboxes/archive_2012.pst")
+pst.open("./testpst.pst")
 root = pst.get_root_folder()
 
 nodenr=0
