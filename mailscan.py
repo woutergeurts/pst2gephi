@@ -2,7 +2,9 @@
 import pypff
 import re
 pst = pypff.file()
-pst.open("./testpst.pst")
+#pst.open("./testpst.pst")
+#pst.open("/media/wgeurts/B2B1-EA27/archive_2014.pst")
+pst.open("/media/wgeurts/B2B1-EA27/archive_2012.pst")
 root = pst.get_root_folder()
 
 nodenr=0
