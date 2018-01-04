@@ -1,89 +1,72 @@
 #! /usr/bin/python
-import pypff
+#
+# This is the mail filter. A set of call backs to run from a pstwalk
+#
+# process_body
+# process_subject
+# process_to_from
+#
+# behaviour is controlled by config file
+#
+import email
 import re
-pst = pypff.file()
-#pst.open("./testpst.pst")
-#pst.open("/media/wgeurts/B2B1-EA27/archive_2014.pst")
-pst.open("/media/wgeurts/B2B1-EA27/archive_2012.pst")
-root = pst.get_root_folder()
+import logging
+logger = logging.getLogger(__name__)
 
-nodenr=0
-edgenr=0
-nodes = {}
-edges = {}
+class mailscan:
+	def __init__(self,config):
+		self.config = config
+		self.nrmsg = 0
 
-def process_headers(headers):
-	global nodenr, edgenr, nodes, edges
-	fromstring = "onbekend";
-	tostring = "";
-	ccstring = "";
-	m = re.search( "From:.*?(<.*>).*:",  
-		headers, flags=re.M|re.S )
-	if m:
-		fromstring = m.group(1)
-	m = re.search( "To:.*?(<.*>).*:",  
-		headers, flags=re.M|re.S )
-	if m:
-		tostring = m.group(1)
-	m = re.search( "Cc:.*?(<.*>).*:",  
-		headers, flags=re.M|re.S )
-	if m:
-		ccstring = m.group(1)
-	fromlist = re.findall("<([^@]*@\S+)>", fromstring)
-	if len(fromlist) > 0:
-		frm = fromlist[0]
-	else:
-		frm = "UNKNOWN@UNKNOWN.ORG"
-	tolist = re.findall("<([^@]*@\S+)>", tostring)
-	cclist = re.findall("<([^@]*@\S+)>", ccstring)
-	if not (frm in nodes):
-		nodes[frm] = nodenr
-		nodenr = nodenr + 1
-	frmnr = nodes[frm]
-	for to in tolist:
-		if not ( to in nodes):
-			nodes[to] = nodenr
-			nodenr = nodenr + 1
-		tonr = nodes[to]
-		if not ((frmnr,tonr) in edges): 
-			edges[(frmnr,tonr)] = 0
-		edges[(frmnr,tonr)] = edges[(frmnr,tonr)] + 1
-			
-def print_nodes():
-	i = 0
-	with open( "nodes.csv","w" ) as f:
-		f.write( "id,node\n" )
-		for node in nodes:
-			f.write( str(i) + "," + node + "\n" )
-			i = i + 1
-	i = 0
-	with open( "edges.csv","w" ) as f:
-		f.write( "source,target,id,weight\n" )
-		for edge in edges:
-			f.write( str(edge[0]) + "," + 
-				 str(edge[1]) + "," + 
-				 str(i) + "," + 
-				 str(edges[edge]) + "\n"
-			 )
+	def process_body(self,body):
+		logger.debug("processing body: " + body)
 
-def list_folder(tab, folder):
-	n = folder.get_number_of_sub_folders()
-	for i in range(0,n):
-		subfolder = folder.get_sub_folder(i)
-		print tab + subfolder.get_name(), subfolder.get_number_of_sub_messages()
-		list_messages(subfolder)
-		ntab = tab + ":" 
-		list_folder( ntab, subfolder )
-	
-def list_messages(folder):
-	nr_msgs = folder.get_number_of_sub_messages()
-	for i in range(1, nr_msgs):
-		m = folder.get_sub_message(i)	
+	def process_subject(self,subject):
+		logger.debug("processing subject: " + subject)
+
+	def process_to_from(self,to,frm):
+		print to;
+		print frm;
+
+	def msg_handle(self, m):
 		headers = m.get_transport_headers()
-		if not (headers is None):
-			process_headers( headers.encode('ascii', 'replace') )
-	
-list_folder("", root)
+		msg = {key: "" for key in ['from','to','cc']}
+		if not headers is None:
+			headers = headers.encode('ascii', 'replace')
+			msg = email.message_from_string(headers)
+		else:
+			msg = {key: "<None@Nowhere>" for key in ['from','to','cc']}
 
-print_nodes()
+		subject = m.get_subject()
+		if not subject is None:
+			subject = subject.encode('ascii', 'replace')
+		else:
+			subject = "None"
 
+		plain_text_body = m.get_plain_text_body()
+		
+		msglist = {}
+		for key in ['from', 'to', 'cc']:
+			if msg[key] is None:
+				msglist[key] = ['None']
+			else:
+				msglist[key] =  re.findall("<([^@]*@\S+)>", msg[key])
+
+		self.process_subject(subject)
+		self.process_body(plain_text_body)
+
+#nodenr=0
+#edgenr=0
+#nodes = {}
+#edges = {}
+
+if __name__ == "__main__":
+	import unittest
+
+	class TestMailScan(unittest.TestCase):
+		def test_process_subject(self):
+			cnfg = ""
+			ms=mailscan(cnfg)
+			ms.process_subject("aap")
+
+    	unittest.main()
