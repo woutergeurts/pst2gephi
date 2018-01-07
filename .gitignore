@@ -1,3 +1,7 @@
 edges.csv
 nodes.csv
-tmp
+tmp*
+try*
+*.pyc
+*.swp
+*.out

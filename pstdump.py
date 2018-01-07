@@ -9,6 +9,8 @@ nodes = {}
 edges = {}
 nrmsgs = 0
 
+import logging
+logger = logging.getLogger(__name__)
 
 def walk_folder(tab, folder, handler):
 	n = folder.get_number_of_sub_folders()
@@ -17,11 +19,13 @@ def walk_folder(tab, folder, handler):
 		foldername = subfolder.get_name()
 
 		if foldername is None:
-			print "Foldername =", None
+			logger.debug("Foldername = None")
 			foldername = "None"
 		else:
 			foldername = foldername.encode('ascii', 'replace')
-		print tab + foldername, subfolder.get_number_of_sub_messages()
+			logger.debug(tab + "Folder " + foldername + 
+			"(" + str(subfolder.get_number_of_sub_messages()) +
+			" messages)")
 
 		walk_messages(subfolder, handler)
 		ntab = tab + ":" 
@@ -69,7 +73,6 @@ def msg_dump(m):
 
 	plain_text_body = m.get_plain_text_body()
 	
-	print '----------------------'
 	#python3: msg = email.message_from_bytes(headers)
 	##print "mst = ", msg
 	msglist = {}
@@ -78,18 +81,29 @@ def msg_dump(m):
 			msglist[key] = ['None']
 		else:
 			msglist[key] =  re.findall("<([^@]*@\S+)>", msg[key])
-		##print "msg ", key, msg[key], msglist[key] 
-		print "msg ", key, msglist[key] 
+		logger.debug("msg ", key, msglist[key] )
 
 	print "subject ", subject
 	##print "plain_text_body", plain_text_body
 
-if __name__ == "__main__":
+def walk_and_dump(fn):
 	pst = pypff.file()
-	##pst.open("./testpst.pst")
-	pst.open("/media/wgeurts/B2B1-EA27/archive_2014.pst", "rs")
+	pst.open(fn)
 	root = pst.get_root_folder()
 
 	walk_folder("", root, msg_dump)
 
 	print "nrmsgs processed = ", nrmsgs
+
+def walk_and_handle(fn, ms):
+	pst = pypff.file()
+	pst.open(fn)
+	root = pst.get_root_folder()
+
+	walk_folder("", root, ms.msg_handle)
+
+	return nrmsgs
+
+if __name__ == "__main__":
+	##pst.open("/media/wgeurts/B2B1-EA27/archive_2014.pst", "rs")
+	walk_and_dump("./testpst.pst")
