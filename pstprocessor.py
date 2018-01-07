@@ -23,7 +23,7 @@ def main():
 	parsed_args = parser.parse_args()
 
 	if parsed_args.logging_verbose:
-		logging.basicConfig(level=logging.DEBUG)
+		logging.getLogger().setLevel(logging.DEBUG)
 		logger.info("DEBUG switched on via -v")
 		
 	config = ConfigParser.ConfigParser()

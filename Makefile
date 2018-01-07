@@ -2,8 +2,11 @@
 # Makefile for pst2gephi
 #
 #
-PSTP=./pstprocessor.py -v
-all: test
+PSTP=./pstprocessor.py 
+all: perftest
 
 test:
-	$(PSTP) -c config.test
+	$(PSTP) -v -c config.test
+
+perftest:
+	$(PSTP) -v -c config.perftest

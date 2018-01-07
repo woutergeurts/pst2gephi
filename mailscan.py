@@ -19,7 +19,7 @@ class mailscan:
 		self.nrmsg = 0
 
 	def process_body(self,body):
-		logger.debug("processing body: " + body)
+		logger.debug("processing body" )
 
 	def process_subject(self,subject):
 		logger.debug("processing subject: " + subject)

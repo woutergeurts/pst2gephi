@@ -4,3 +4,4 @@ tmp*
 try*
 *.pyc
 *.swp
+*.out
