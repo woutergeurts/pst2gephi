@@ -17,7 +17,6 @@ perftest:
 # (as user)     $ newgrp docker
 #
 # to get the sources of libpff:
-# git submodule update --init --recursive
 #
 DOCKER_BASE=pypffbase
 DOCKERFILE_BASE=docker/Dockerfile.pypff
@@ -25,7 +24,14 @@ DOCKER_IMAGE=pst2gephi.img
 DOCKER_NAME=pst2gephi.name
 DOCKERFILE_RUN=docker/Dockerfile.pst2gephi
 
-make.build_base: $(DOCKERFILE_BASE)
+make.build_git: 
+	echo "if docker does not work add the current user to group docker"
+	echo "see Makefile for details"
+	docker ps
+	git submodule update --init --recursive
+	touch make.build_git
+
+make.build_base: $(DOCKERFILE_BASE) make.build_git
 	docker image rm $(DOCKER_BASE) || true
 	docker build -f $(DOCKERFILE_BASE) -t $(DOCKER_BASE) .
 	touch make.build_base
