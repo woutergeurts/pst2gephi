@@ -1,0 +1,25 @@
+diff -u -r libcerror.orig/libcerror_error.c libcerror/libcerror_error.c
+--- libcerror.orig/libcerror_error.c	2018-01-10 20:19:37.356562836 +0100
++++ libcerror/libcerror_error.c	2017-10-10 21:15:52.418740998 +0200
+@@ -402,7 +402,7 @@
+ 		 const char *,
+ 		 format_string );
+ 
+-		print_count = system_string_vsnprintf(
++		print_count = vsnprintf(
+ 		               error_string,
+ 		               message_size,
+ 		               system_format_string,
+diff -u -r libcerror.orig/libcerror_system.c libcerror/libcerror_system.c
+--- libcerror.orig/libcerror_system.c	2018-01-10 20:20:34.991601552 +0100
++++ libcerror/libcerror_system.c	2017-10-10 21:15:59.906679603 +0200
+@@ -463,7 +463,7 @@
+ 		 const char *,
+ 		 format_string );
+ 
+-		print_count = system_string_vsnprintf(
++		print_count = vsnprintf(
+ 		               error_string,
+ 		               message_size,
+ 		               system_format_string,
+Only in libcerror.orig/: libcerror_system.c.orig

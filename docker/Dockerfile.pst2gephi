@@ -1,0 +1,13 @@
+FROM pypffbase
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+#
+# LD LIBRARY PATH Zetten in 
+# dockerbuild en dockerrun scheiden
+
+#CMD [ "/usr/bin/make test" ]
+CMD [ "/bin/bash" ]
+#CMD [ "./go.sh" ]

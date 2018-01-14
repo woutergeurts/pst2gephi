@@ -1,5 +1,6 @@
 edges.csv
 nodes.csv
+make.*
 tmp*
 try*
 *.pyc
