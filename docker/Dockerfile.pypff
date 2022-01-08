@@ -2,15 +2,15 @@ FROM ubuntu
 
 WORKDIR /usr/src/app
 COPY libpff /usr/src/app/libpff
-COPY libpff.patch /usr/src/app/libpff.patch
 
-#RUN pip install --no-cache-dir -r requirements.txt
 ## install autogen 
 RUN apt-get update -y
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 RUN apt-get install -y autogen git automake pkg-config autopoint libtool python
 RUN apt-get install -y build-essential debhelper fakeroot autotools-dev zlib1g-dev python-all-dev
-RUN (cd /usr/src/app/libpff; ./synclibs.sh; cd libcerror; patch < ../../libpff.patch/libcerror.patch )
-RUN (cd /usr/src/app/libpff; ./autogen.sh; ./configure --enable-python )
+RUN (cd /usr/src/app/libpff; ./synclibs.sh; )
+RUN (cd /usr/src/app/libpff; ./autogen.sh; )
+RUN (cd /usr/src/app/libpff; ./configure --enable-python )
 RUN (cd /usr/src/app/libpff; make && make install )
 #
 # LD LIBRARY PATH Zetten in 

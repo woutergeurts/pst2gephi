@@ -105,5 +105,4 @@ def walk_and_handle(fn, ms):
 	return nrmsgs
 
 if __name__ == "__main__":
-	##pst.open("/media/wgeurts/B2B1-EA27/archive_2014.pst", "rs")
 	walk_and_dump("./testpst.pst")
